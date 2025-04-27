@@ -1,3 +1,4 @@
+# TUTAJ DOKONAMY CUDU STWORZENIA
 # <<Tytuł projektu>>
 *Krótki opis problemu i podejścia, fragment kodu prezentujący, jak wykorzystać opracowane rozwiązanie.*
 
