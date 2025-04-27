@@ -22,10 +22,12 @@ class KNN:
 
     def predict(self, x_test: np.ndarray):
         """
+
         TODO:
         Metoda predict powinna umożliwiać inferencję wielu obiektów na raz; niech
         przyjmuje macierz numpy o wymiarach 𝑛 × 𝑚, gdzie n oznacza liczbę obiektów
         testowych, a m liczbę atrybutów warunkowych.
+
         """
         # Wykonywanie predykcji na podstawie wiedzy z treningu i uwzględniając hiperparametry
 

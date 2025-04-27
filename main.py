@@ -1,4 +1,5 @@
 """
+
 TODO:
 - pobranie i wczytanie dataset z kagglehub (wyświetlić)
 - usunąć recordy w których coś brakuje (uzupelnić)
@@ -12,6 +13,7 @@ macierz pomyłek.
 - Zmodyfikowany model powinien zostać porównany ze źródłowym modelem –
 należy przedstawić różnice i podjąć próbę wyjaśnienia źródła różnic.
 - Należy przedstawić krótkie podsumowanie i interpretację wyników.
+
 """
 
 def main():

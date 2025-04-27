@@ -16,3 +16,5 @@
 
 ## Wnioski
 *Tutaj należy zamieścić obserwacje, wnioski, sugestie*
+
+
