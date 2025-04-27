@@ -21,16 +21,30 @@ import numpy as np
 import kagglehub
 from kagglehub import KaggleDatasetAdapter
 from sklearn.impute import SimpleImputer
+from sklearn.feature_selection import SelectKBest, f_regression
+from sklearn.preprocessing import MinMaxScaler
 
-def main():
-    # Wczytanie danych z Kaggle za pomocą kagglehub
+
+# Funkcja do wyboru najlepszych cech
+def auto_select_features(X, y, k=4):
+    selector = SelectKBest(score_func=f_regression, k=k)
+    X_selected = selector.fit_transform(X, y)
+    selected_columns = X.columns[selector.get_support()]
+    return X_selected, selected_columns
+
+# Wczytanie danych z Kaggle za pomocą kagglehub
+def read_dataset():
     file_path = "realtor-data.zip.csv"
     df = kagglehub.load_dataset(
         KaggleDatasetAdapter.PANDAS,
         "ahmedshahriarsakib/usa-real-estate-dataset",
         file_path,
     )
+    return df
 
+
+def main():
+    df = read_dataset()
     # Ograniczenie do pierwszych 300 wierszy
     df = df.head(300)
     print("Pierwsze 5 rekordów z ograniczonego zbioru danych:")
@@ -51,6 +65,18 @@ def main():
         else:
             print(f"Kolumna {column} jest pusta lub brak wartości do imputacji.")
 
+    # Przygotowanie cech i zmiennej docelowej
+    X = df[['bed', 'bath', 'acre_lot', 'house_size']]
+    y = df['price']
+
+    # Skalowanie cech
+    scaler = MinMaxScaler()
+    X_scaled = pd.DataFrame(scaler.fit_transform(X), columns=X.columns)
+
+
+    # Wybór najlepszych cech
+    X_selected, selected_features = auto_select_features(X_scaled, y, k=4)
+    print(f"Wybrane cechy: {list(selected_features)}")
 
 if __name__ == '__main__':
     main()
