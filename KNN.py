@@ -1,6 +1,8 @@
 import numpy as np
 
 
+
+
 def euclidean_distance(x1, x2):
     return (sum((x1 - x2) ** 2)) ** (1 / 2)
 
@@ -19,6 +21,12 @@ class KNN:
         pass
 
     def predict(self, x_test: np.ndarray):
+        """
+        TODO:
+        Metoda predict powinna umożliwiać inferencję wielu obiektów na raz; niech
+        przyjmuje macierz numpy o wymiarach 𝑛 × 𝑚, gdzie n oznacza liczbę obiektów
+        testowych, a m liczbę atrybutów warunkowych.
+        """
         # Wykonywanie predykcji na podstawie wiedzy z treningu i uwzględniając hiperparametry
 
         tablica_odleglosci = []
