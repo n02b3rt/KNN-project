@@ -1,70 +1,66 @@
 import numpy as np
 
-
-
-
-def euclidean_distance(x1, x2):
-    return (sum((x1 - x2) ** 2)) ** (1 / 2)
-
-
 class KNN:
     def __init__(self, n_neighbors=1):
         # inicjalizacja hiperparametrów modelu - liczba sąsiadów, metryka itp
-        self.n_neighnors = n_neighbors
-        pass
+        self.n_neighbors = n_neighbors
 
     def fit(self, X: np.ndarray, y: np.ndarray):
         # uczenie modelu - przyjęcie danych treningowych
         self.X = X
         self.y = y
 
-        pass
-
     def predict(self, x_test: np.ndarray):
         """
-
         TODO:
         Metoda predict powinna umożliwiać inferencję wielu obiektów na raz; niech
         przyjmuje macierz numpy o wymiarach 𝑛 × 𝑚, gdzie n oznacza liczbę obiektów
         testowych, a m liczbę atrybutów warunkowych.
-
         """
+
         # Wykonywanie predykcji na podstawie wiedzy z treningu i uwzględniając hiperparametry
 
-        tablica_odleglosci = []
+        dists = []
 
-        for el in self.X:
-            tablica_odleglosci.append(euclidean_distance(el, x_test))
+        for x_test_point in x_test:
+            distances = np.sqrt(((self.X - x_test_point) ** 2).sum(axis=1))
+            dists.append(distances)
 
-        # print(tablica_odleglosci)
+        dists = np.array(dists)
 
-        indeksy_najmniejszch = []
+        # Znajdowanie n najbliższych sąsiadów
+        neighbors_indices = np.argpartition(dists, self.n_neighbors, axis=1)[:, :self.n_neighbors]
+        print(neighbors_indices)
 
-        for _ in range(self.n_neighnors):
-            # indeks_najmniejszej = -1
-            # wartosc_najmniejszej = sys.maxsize
-            # for i,e in enumerate(tablica_odleglosci):
-            #      if e < wartosc_najmniejszej and i not in indeksy_najmniejszch:
-            #         wartosc_najmniejszej = e
-            #         indeks_najmniejszej = i
-            #
-            # indeksy_najmniejszch.append(indeks_najmniejszej)
+        # Predykcja - obliczanie średniej wartości z najbliższych sąsiadów
+        predictions = np.mean(self.y[neighbors_indices], axis=1)
+        print(neighbors_indices)
 
-            indeks = np.argmin(tablica_odleglosci)
-            del tablica_odleglosci[indeks]
-            indeksy_najmniejszch.append(int(indeks))
+        return predictions
 
-        print(indeksy_najmniejszch)
 
-        decyzje = [int(self.y[i]) for i in indeksy_najmniejszch]
-        print(decyzje)
+if __name__ == '__main__':
+    # Dane treningowe (price, bed, bath, acreage, house_size)
+    X_train = np.array([
+        [105000, 3, 2, 0.12, 920],
+        [80000, 4, 2, 0.08, 1527],
+        [67000, 2, 1, 0.15, 748],
+        [145000, 4, 2, 0.1, 1800],
+        [65000, 6, 2, 0.05, 1200]
+    ])
 
-        ucdecyzje = np.unique_counts(decyzje)
-        maxucdecyzje = np.argmax(np.unique_counts(decyzje).counts)
+    # Ceny
+    y_train = np.array([103378, 52707, 103379, 31239, 34632])
 
-        print(ucdecyzje)
-        print(maxucdecyzje)
+    model = KNN(n_neighbors=3)
+    model.fit(X_train, y_train)
 
-        print(ucdecyzje.values[maxucdecyzje])
+    # Dane do testu modelu
+    X_test = np.array([
+        [105000, 3, 2, 0.12, 1000],
+        [80000, 3, 2, 0.1, 1200],
+    ])
 
-        pass
+    predictions = model.predict(X_test)
+
+    print(f"Predykcje: {predictions}")
