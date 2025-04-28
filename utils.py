@@ -1,6 +1,7 @@
 import os
 import subprocess
 import zipfile
+import numpy as np
 import pandas as pd
 from sklearn.feature_selection import SelectKBest, f_regression
 
@@ -45,5 +46,27 @@ def read_dataset():
     # Wczytaj CSV do DataFrame
     print("Wczytywanie danych...")
     df = pd.read_csv(csv_filename)
+
+    return df
+
+def clean_dataset(df):
+    # Przekształcenie kolumny 'price' na liczby, ustawiając błędne wartości (np. 'unset') na NaN
+    df['price'] = pd.to_numeric(df['price'], errors='coerce')
+
+    # Usuwanie wierszy, gdzie brakujące wartości są w kolumnach 'acre_lot' lub 'price'
+    df = df.dropna(subset=['acre_lot', 'price'])
+
+    # Usuwanie wierszy, gdzie wartość w kolumnie 'price' wynosi 1
+    df = df[df['price'] != 1]
+
+    # Wypełnianie brakujących wartości 0 tylko w kolumnach numerycznych
+    numeric_columns = df.select_dtypes(include=[np.number]).columns
+    df[numeric_columns] = df[numeric_columns].apply(lambda x: x.fillna(0))
+
+    # Usuń niepotrzebne kolumny
+    df = df.drop(columns=['prev_sold_date'])
+
+    #usunięćie NaN
+    df.dropna()
 
     return df

@@ -1,19 +1,14 @@
 import os
-
 import joblib
 import pandas as pd
 import numpy as np
-from sklearn.impute import SimpleImputer
+from matplotlib import pyplot as plt
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 from sklearn.preprocessing import MinMaxScaler
-import matplotlib.pyplot as plt
-
-from utils import auto_select_features,read_dataset
-
+from utils import auto_select_features, read_dataset, clean_dataset
 from sklearn.model_selection import KFold, train_test_split
 from KNN import KNN
 
-import numpy as np
 
 def main():
     df = read_dataset()
@@ -27,6 +22,9 @@ def main():
     min_price = df['price'].min()  # Najmniejsza cena
     amplitude = max_price - min_price  # Amplituda cen
 
+    #czyszczenie wyników
+    df = clean_dataset(df)
+
     # Wyświetlanie wyników
     print(f"Największa cena: {max_price}")
     print(f"Najmniejsza cena: {min_price}")
@@ -34,19 +32,6 @@ def main():
 
     print("Pierwsze 5 rekordów z ograniczonego zbioru danych:")
     print(df.head())
-
-    # Przekształcenie kolumny 'price' na liczby, ustawiając błędne wartości (np. 'unset') na NaN
-    df['price'] = pd.to_numeric(df['price'], errors='coerce')
-
-    # Usuwanie wierszy, gdzie brakujące wartości są w kolumnach 'acre_lot' lub 'price'
-    df = df.dropna(subset=['acre_lot', 'price'])
-
-    # Usuwanie wierszy, gdzie wartość w kolumnie 'price' wynosi 1
-    df = df[df['price'] != 1]
-
-    # Wypełnianie brakujących wartości 0 tylko w kolumnach numerycznych
-    numeric_columns = df.select_dtypes(include=[np.number]).columns
-    df[numeric_columns] = df[numeric_columns].apply(lambda x: x.fillna(0))
 
     # Przygotowanie cech i zmiennej docelowej
     X = df.select_dtypes(include=[np.number]).drop(columns=['price'])  # Usuwamy 'price' z numerycznych kolumn
