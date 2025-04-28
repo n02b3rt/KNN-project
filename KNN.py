@@ -8,7 +8,7 @@ class KNN:
     def fit(self, X: np.ndarray, y: np.ndarray):
         # uczenie modelu - przyjęcie danych treningowych
         self.X = X
-        self.y = y
+        self.y = np.array(y)
 
     def predict(self, x_test: np.ndarray):
         """
