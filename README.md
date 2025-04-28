@@ -88,7 +88,9 @@ Przykładowe wyniki:
 | R²         | 0.77     |
 
 
-Dla wizualizacji błędów predykcji można dodatkowo przedstawić histogram lub wykres rzeczywistych vs przewidywanych wartości (np. scatter plot).
+Dla wizualizacji błędów predykcji dodatkowo przedstawiono histogram rzeczywistych vs przewidywanych wartości.
+![image](https://github.com/user-attachments/assets/18815b06-1b57-4adb-8d55-d20232a58788)
+
 
 ## Wnioski
 Dobór cech oraz ich skalowanie mają kluczowy wpływ na jakość modelu KNN.
