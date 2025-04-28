@@ -16,8 +16,8 @@ def read_dataset():
     zip_filename = "usa-real-estate-dataset.zip"
     csv_filename = "realtor-data.zip.csv"
 
-    # Sprawdź, czy plik ZIP istnieje
-    if not os.path.exists(zip_filename):
+    # Sprawdź, czy plik CSV istnieje
+    if not os.path.exists(csv_filename):
         print("Plik nie istnieje. Pobieranie...")
         curl_command = [
             "curl",
