@@ -29,7 +29,7 @@ def read_dataset():
         ]
         subprocess.run(curl_command, check=True)
     else:
-        print("Plik ZIP już istnieje. Pomijam pobieranie.")
+        print("Plik już istnieje. Pomijam pobieranie.")
 
     # Wypakuj ZIP jeśli plik CSV nie istnieje
     if not os.path.exists(csv_filename):
@@ -40,8 +40,7 @@ def read_dataset():
         # Usuwanie pliku ZIP po rozpakowaniu
         print("Usuwanie pliku ZIP...")
         os.remove(zip_filename)
-    else:
-        print("Plik CSV już istnieje. Pomijam rozpakowywanie.")
+
 
     # Wczytaj CSV do DataFrame
     print("Wczytywanie danych...")
