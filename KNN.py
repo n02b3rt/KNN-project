@@ -1,40 +1,34 @@
 import numpy as np
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics.pairwise import euclidean_distances, manhattan_distances
 
 class KNN:
-    def __init__(self, n_neighbors=1):
-        # inicjalizacja hiperparametrów modelu - liczba sąsiadów, metryka itp
+    def __init__(self, n_neighbors=1, metric='euclidean'):
         self.n_neighbors = n_neighbors
+        self.metric = metric
 
     def fit(self, X: np.ndarray, y: np.ndarray):
-        # uczenie modelu - przyjęcie danych treningowych
         self.X = X
         self.y = np.array(y)
 
-    def predict(self, x_test: np.ndarray):
+    def predict(self, X_test: np.ndarray):
         """
-        TODO:
-        Metoda predict powinna umożliwiać inferencję wielu obiektów na raz; niech
-        przyjmuje macierz numpy o wymiarach 𝑛 × 𝑚, gdzie n oznacza liczbę obiektów
-        testowych, a m liczbę atrybutów warunkowych.
+        Funkcja do predykcji dla wielu punktów testowych.
         """
 
-        # Wykonywanie predykcji na podstawie wiedzy z treningu i uwzględniając hiperparametry
-
-        dists = []
-
-        for x_test_point in x_test:
-            distances = np.sqrt(((self.X - x_test_point) ** 2).sum(axis=1))
-            dists.append(distances)
-
-        dists = np.array(dists)
+        # Wybór odpowiedniej metryki
+        if self.metric == 'euclidean':
+            dists = euclidean_distances(X_test, self.X)
+        elif self.metric == 'manhattan':
+            dists = manhattan_distances(X_test, self.X)
+        else:
+            raise ValueError("Unknown metric: choose 'euclidean' or 'manhattan'")
 
         # Znajdowanie n najbliższych sąsiadów
-        neighbors_indices = np.argpartition(dists, self.n_neighbors, axis=1)[:, :self.n_neighbors]
-        # print(neighbors_indices)
+        neighbors_indices = np.argsort(dists, axis=1)[:, :self.n_neighbors]
 
         # Predykcja - obliczanie średniej wartości z najbliższych sąsiadów
         predictions = np.mean(self.y[neighbors_indices], axis=1)
-        # print(neighbors_indices)
 
         return predictions
 
@@ -52,8 +46,13 @@ if __name__ == '__main__':
     # Ceny
     y_train = np.array([103378, 52707, 103379, 31239, 34632])
 
-    model = KNN(n_neighbors=3)
-    model.fit(X_train, y_train)
+    # Skalowanie danych
+    scaler = StandardScaler()
+    X_train_scaled = scaler.fit_transform(X_train)
+
+    # Tworzenie modelu z metryką Manhattan
+    model = KNN(n_neighbors=3, metric='manhattan')
+    model.fit(X_train_scaled, y_train)
 
     # Dane do testu modelu
     X_test = np.array([
@@ -61,6 +60,9 @@ if __name__ == '__main__':
         [80000, 3, 2, 0.1, 1200],
     ])
 
-    predictions = model.predict(X_test)
+    # Skalowanie danych testowych
+    X_test_scaled = scaler.transform(X_test)
+
+    predictions = model.predict(X_test_scaled)
 
     print(f"Predykcje: {predictions}")

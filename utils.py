@@ -1,6 +1,7 @@
 import os
 import subprocess
 import zipfile
+import numpy as np
 import pandas as pd
 from sklearn.feature_selection import SelectKBest, f_regression
 
@@ -48,33 +49,24 @@ def read_dataset():
 
     return df
 
-def clean_data(df):
-    # Wypełnij brakujące wartości w kolumnie 'bed' zerami
-    df['bed'] = df['bed'].fillna(0)
+def clean_dataset(df):
+    # Przekształcenie kolumny 'price' na liczby, ustawiając błędne wartości (np. 'unset') na NaN
+    df['price'] = pd.to_numeric(df['price'], errors='coerce')
 
-    # Wypełnij brakujące wartości w kolumnie 'bath' zerami
-    df['bath'] = df['bath'].fillna(0)
+    # Usuwanie wierszy, gdzie brakujące wartości są w kolumnach 'acre_lot' lub 'price'
+    df = df.dropna(subset=['acre_lot', 'price'])
 
-    # Wypełnij brakujące wartości w 'acre_lot' średnią
-    df['acre_lot'] = df['acre_lot'].fillna(df['acre_lot'].mean())
+    # Usuwanie wierszy, gdzie wartość w kolumnie 'price' wynosi 1
+    df = df[df['price'] != 1]
 
-    # Konwertuj 'street' na liczby (lub NaN jeśli nie da się)
-    df['street'] = pd.to_numeric(df['street'], errors='coerce')
-
-    # Zamień wartości kategorii 'city' i 'state' na kody liczbowe
-    df['city'] = pd.Categorical(df['city']).codes
-    df['state'] = pd.Categorical(df['state']).codes
-
-    # Konwertuj 'zip_code' na liczby (lub NaN)
-    df['zip_code'] = pd.to_numeric(df['zip_code'], errors='coerce')
+    # Wypełnianie brakujących wartości 0 tylko w kolumnach numerycznych
+    numeric_columns = df.select_dtypes(include=[np.number]).columns
+    df[numeric_columns] = df[numeric_columns].apply(lambda x: x.fillna(0))
 
     # Usuń niepotrzebne kolumny
     df = df.drop(columns=['prev_sold_date'])
 
-    # Dodatkowe usuwanie NaN
-    df = df.dropna()
-
-    # Resetowanie indeksu po usunięciu wierszy
-    df = df.reset_index(drop=True)
+    #usunięćie NaN
+    df.dropna()
 
     return df
