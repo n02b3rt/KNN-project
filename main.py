@@ -6,7 +6,7 @@ import numpy as np
 from sklearn.impute import SimpleImputer
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 from sklearn.preprocessing import MinMaxScaler
-from utils import auto_select_features,read_dataset
+from utils import auto_select_features, read_dataset, clean_data
 from sklearn.model_selection import KFold, train_test_split
 from KNN import KNN
 
@@ -18,28 +18,14 @@ def main():
     print(df.head())
 
     # ---  Czyszczenie danych ---
-    # Zamiana wartości nieprawidłowych ('unset') w kolumnie 'price' na NaN
-    df['price'] = pd.to_numeric(df['price'], errors='coerce')
-
-    # Usunięcie wierszy z brakami w kluczowych kolumnach
-    df = df.dropna(subset=['acre_lot', 'price'])
-
-    # Usunięcie wierszy, gdzie cena wynosi dokładnie 1
-    df = df[df['price'] != 1]
-
-    # Wypełnienie braków zerami tylko w kolumnach numerycznych
-    numeric_cols = df.select_dtypes(include=[np.number]).columns
-    df[numeric_cols] = df[numeric_cols].fillna(0)
-
-    # Resetowanie indeksu po usunięciu wierszy
-    df = df.reset_index(drop=True)
+    df = clean_data(df)
 
     print("\nZbiór danych po czyszczeniu:")
     print(df.info())
     print(df.head())
 
-    # ---  (Opcjonalnie) Ograniczenie zbioru danych ---
-    df = df.head(300)
+    # --- Ograniczenie zbioru danych ---
+    df = df.head(16000)
 
     # ---  Przygotowanie cech (X) i zmiennej docelowej (y) ---
     X = df.select_dtypes(include=[np.number]).drop(columns=['price'])

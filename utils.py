@@ -47,3 +47,34 @@ def read_dataset():
     df = pd.read_csv(csv_filename)
 
     return df
+
+def clean_data(df):
+    # Wypełnij brakujące wartości w kolumnie 'bed' zerami
+    df['bed'] = df['bed'].fillna(0)
+
+    # Wypełnij brakujące wartości w kolumnie 'bath' zerami
+    df['bath'] = df['bath'].fillna(0)
+
+    # Wypełnij brakujące wartości w 'acre_lot' średnią
+    df['acre_lot'] = df['acre_lot'].fillna(df['acre_lot'].mean())
+
+    # Konwertuj 'street' na liczby (lub NaN jeśli nie da się)
+    df['street'] = pd.to_numeric(df['street'], errors='coerce')
+
+    # Zamień wartości kategorii 'city' i 'state' na kody liczbowe
+    df['city'] = pd.Categorical(df['city']).codes
+    df['state'] = pd.Categorical(df['state']).codes
+
+    # Konwertuj 'zip_code' na liczby (lub NaN)
+    df['zip_code'] = pd.to_numeric(df['zip_code'], errors='coerce')
+
+    # Usuń niepotrzebne kolumny
+    df = df.drop(columns=['prev_sold_date'])
+
+    # Dodatkowe usuwanie NaN
+    df = df.dropna()
+
+    # Resetowanie indeksu po usunięciu wierszy
+    df = df.reset_index(drop=True)
+
+    return df
