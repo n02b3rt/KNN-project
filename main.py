@@ -35,23 +35,21 @@ def main():
     print("Pierwsze 5 rekordów z ograniczonego zbioru danych:")
     print(df.head())
 
-    # Usuwanie brakujących wartości za pomocą imputera
-    imputer = SimpleImputer(strategy='mean')
+    # Przekształcenie kolumny 'price' na liczby, ustawiając błędne wartości (np. 'unset') na NaN
+    df['price'] = pd.to_numeric(df['price'], errors='coerce')
 
-    # Wydzielenie kolumn numerycznych i kategorycznych
+    # Usuwanie wierszy, gdzie brakujące wartości są w kolumnach 'acre_lot' lub 'price'
+    df = df.dropna(subset=['acre_lot', 'price'])
+
+    # Usuwanie wierszy, gdzie wartość w kolumnie 'price' wynosi 1
+    df = df[df['price'] != 1]
+
+    # Wypełnianie brakujących wartości 0 tylko w kolumnach numerycznych
     numeric_columns = df.select_dtypes(include=[np.number]).columns
-    categorical_columns = df.select_dtypes(include=['object']).columns
-
-    # Uzupełnienie braków
-    df[numeric_columns] = pd.DataFrame(imputer.fit_transform(df[numeric_columns]), columns=numeric_columns)
-    for column in categorical_columns:
-        if not df[column].mode().empty:
-            df[column] = df[column].fillna(df[column].mode()[0])
-        else:
-            print(f"Kolumna {column} jest pusta lub brak wartości do imputacji.")
+    df[numeric_columns] = df[numeric_columns].apply(lambda x: x.fillna(0))
 
     # Przygotowanie cech i zmiennej docelowej
-    X = df[['bed', 'bath', 'acre_lot', 'house_size']]
+    X = df.select_dtypes(include=[np.number]).drop(columns=['price'])  # Usuwamy 'price' z numerycznych kolumn
     y = df['price']
 
     # Skalowanie cech
