@@ -30,11 +30,11 @@ class KNN:
 
         # Znajdowanie n najbliższych sąsiadów
         neighbors_indices = np.argpartition(dists, self.n_neighbors, axis=1)[:, :self.n_neighbors]
-        print(neighbors_indices)
+        # print(neighbors_indices)
 
         # Predykcja - obliczanie średniej wartości z najbliższych sąsiadów
         predictions = np.mean(self.y[neighbors_indices], axis=1)
-        print(neighbors_indices)
+        # print(neighbors_indices)
 
         return predictions
 

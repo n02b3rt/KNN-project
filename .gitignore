@@ -1,4 +1,5 @@
 .idea
 .venv
+.env
 realtor-data.zip.csv
 usa-real-estate-dataset.zip
